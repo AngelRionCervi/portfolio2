@@ -1,4 +1,10 @@
 //@ts-ignore
-import { createComp, store, addGlobalCSS } from "./lib/Vengarl";
+import { createComp, store, addGlobalCSS } from "vengarl";
+import "./components/background";
 
-console.log("hey",createComp, store)
+
+
+createComp("app-root", ({ html }: any) => {
+    
+    return () => html`<app-background></app-background>`;
+});
