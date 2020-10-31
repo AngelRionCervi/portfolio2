@@ -5,7 +5,9 @@ import anime from "animejs";
 
 createComp("app-square", ({ html, css, self, query, onAttached }: any) => {
     const initSquareSize = 75;
-    const endSquareSize = 600;
+    const endSquareSize = 700;
+    const borderWidth = 40;
+    const finalShift = 40;
 
     const calcNewCenter = (size: number) => {
         return {
@@ -17,23 +19,24 @@ createComp("app-square", ({ html, css, self, query, onAttached }: any) => {
     const initPos = calcNewCenter(initSquareSize);
     const squareContainer = css`
         position: absolute;
+        z-index: 2;
         background-color: white;
-        box-shadow: inset 0px 0px 0px 40px black;
+        box-shadow: inset 0px 0px 0px ${borderWidth}px black;
     `;
     console.log(self);
 
     const squareAnimation = () => {
         const squareEl = query(`.${squareContainer}`);
-        squareEl.style.zIndex = "2";
         anime({
             targets: squareEl,
+            rotate: [{value: "1turn", duration: 400, easing: "easeInQuad"}],
             top: [
-                { value: window.innerHeight / 2 - initSquareSize / 2, duration: 250, easing: "linear" },
-                { value: calcNewCenter(endSquareSize).y + "px", duration: 250, easing: "linear" },
+                { value: calcNewCenter(initSquareSize).y + "px", duration: 400, easing: "easeInQuad" },
+                { value: calcNewCenter(endSquareSize).y + "px", duration: 400, easing: "easeInQuad" },
             ],
-            width: [{ value: endSquareSize, duration: 250, delay: 250, easing: "linear" }],
-            height: [{ value: endSquareSize, duration: 250, delay: 250, easing: "linear" }],
-            left: [{ value: calcNewCenter(endSquareSize).x + "px", duration: 250, delay: 250, easing: "linear" }],
+            width: [{ value: endSquareSize, duration: 400, delay: 400, easing: "easeInQuad" }],
+            height: [{ value: endSquareSize, duration: 400, delay: 400, easing: "easeInQuad" }],
+            left: [{ value: calcNewCenter(endSquareSize).x + "px", duration: 400, delay: 400, easing: "easeInQuad" }],
             complete: () => {
                 const squareElShadow = squareEl.cloneNode(true);
                 squareElShadow.style.zIndex = "1";
@@ -41,8 +44,13 @@ createComp("app-square", ({ html, css, self, query, onAttached }: any) => {
                 self.shadowRootAccessor.appendChild(squareElShadow);
                 anime({
                     targets: squareElShadow,
-                    translateX: [{ value: -80, duration: 250, easing: "linear" }],
-                    translateY: [{ value: -80, duration: 250, easing: "linear" }],
+                    translateX: [{ value: -finalShift, duration: 250, easing: "easeInQuad" }],
+                    translateY: [{ value: -finalShift, duration: 250, easing: "easeInQuad" }],
+                })
+                anime({
+                    targets: squareEl,
+                    translateX: [{ value: finalShift, duration: 250, easing: "easeInQuad" }],
+                    translateY: [{ value: finalShift, duration: 250, easing: "easeInQuad" }],
                 })
             }
         });
