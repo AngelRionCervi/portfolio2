@@ -40,7 +40,7 @@ createComp("app-square", ({ html, css, self, query, onAttached }: any) => {
             complete: () => {
                 const squareElShadow = squareEl.cloneNode(true);
                 squareElShadow.style.zIndex = "1";
-                console.log(squareElShadow)
+                squareElShadow.innerHTML = "";
                 self.shadowRootAccessor.appendChild(squareElShadow);
                 anime({
                     targets: squareElShadow,
