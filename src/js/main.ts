@@ -1,8 +1,8 @@
 //@ts-ignore
 import { createComp, store, addGlobalCSS } from "vengarl";
 import "./components/background";
-import "./components/square";
-
+import "./components/squaresContainer";
+import "./components/squares";
 
 createComp("app-root", ({ html }: any) => {
     
