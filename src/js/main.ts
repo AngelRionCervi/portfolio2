@@ -3,6 +3,7 @@ import { createComp, store, addGlobalCSS } from "vengarl";
 import "./components/background";
 import "./components/squaresContainer";
 import "./components/squares";
+import "./components/circleArrow";
 
 createComp("app-root", ({ html }: any) => {
     
