@@ -4,6 +4,7 @@ import "./components/background";
 import "./components/squaresContainer";
 import "./components/squares";
 import "./components/circleArrow";
+import "./components/workScreen";
 
 createComp("app-root", ({ html }: any) => {
     

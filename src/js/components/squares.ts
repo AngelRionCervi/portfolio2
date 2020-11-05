@@ -62,7 +62,7 @@ createComp("square-1", ({ html, css, createState, useGlobal, cx, props, onAttach
         align-self: center;
     `;
 
-    const githubIcon = css`
+    const workIcon = css`
         width: 35px;
         height: 35px;
         background-color: black;
@@ -89,7 +89,7 @@ createComp("square-1", ({ html, css, createState, useGlobal, cx, props, onAttach
                 My name is Angel Rion - Cervi <br /><br />
                 I like to build and design website
             </p>
-            <div class=${githubIcon}></div>
+            <div class=${workIcon} @click=${() => props()?.toggleWorkScreen()}></div>
             <circle-arrow
                 orientation="bottom-right"
                 circleSize="20"

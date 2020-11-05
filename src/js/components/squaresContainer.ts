@@ -7,20 +7,30 @@ import gState from "../state";
 createComp("app-square", ({ html, css, self, queryAll, onAttached, query, createState }: any) => {
     //const { state, setState } = createState({ currentPage: 1 });
 
-    const getEndSize = () => {
-        const size = window.innerWidth/7 + window.innerHeight/7;
+    const getEndMainScreenSize = () => {
+        const size = window.innerWidth / 7 + window.innerHeight / 7;
         return size > 500 ? size : 500;
-    }
+    };
+
+    const getEndWorkContainerSize = () => {
+        const w = window.innerWidth / 1.4;
+        const h = window.innerHeight / 1.3;
+        return { w, h };
+    };
 
     const initContainerSquareSize = 0;
     const initSquareSize = 75;
-    const endSquareSize = getEndSize();
+    const endSquareSize = getEndMainScreenSize();
     const borderWidth = 20;
     const finalShift = 25;
     const switchPeak = endSquareSize / 2;
     const endContainerSquareSize = endSquareSize + finalShift * 2;
 
+    const endWorkContainerSize = getEndWorkContainerSize();
+
     let transitioning = false;
+    let openingAnimationOver = false;
+    let workClickedBeforeOpeningEnd = false;
 
     const calcNewCenter = (size: number) => {
         return {
@@ -46,9 +56,10 @@ createComp("app-square", ({ html, css, self, queryAll, onAttached, query, create
         width: ${initContainerSquareSize}px;
         height: ${initContainerSquareSize}px;
         filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.25));
+        background-color: rgba(255, 255, 255, 0);
     `;
 
-    const squareAnimation = () => {
+    const openingAnimation = () => {
         const containerSquare = query(`.${mainContainer}`);
         const squareEls = queryAll(`.${squareContainer}`);
         anime({
@@ -78,22 +89,25 @@ createComp("app-square", ({ html, css, self, queryAll, onAttached, query, create
                     anime({
                         targets: containerSquare,
                         width: [{ value: endContainerSquareSize, duration: 500, easing: "linear" }],
-                        height: [{ value: endContainerSquareSize+1, duration: 500, easing: "linear" }],
+                        height: [{ value: endContainerSquareSize + 1, duration: 500, easing: "linear" }],
                         top: [
                             { value: calcNewCenter(endContainerSquareSize).y + "px", duration: 500, easing: "linear" },
                         ],
                         left: [
                             { value: calcNewCenter(endContainerSquareSize).x + "px", duration: 500, easing: "linear" },
                         ],
+                        complete() {
+                            openingAnimationOver = true;
+                            if (workClickedBeforeOpeningEnd) {
+                                toggleWorkScreen();
+                                workClickedBeforeOpeningEnd = false;
+                            }
+                        },
                     });
                 });
             },
         });
     };
-
-    onAttached(() => {
-        squareAnimation();
-    });
 
     const switchPage = (page: number) => {
         if (transitioning) return;
@@ -131,8 +145,79 @@ createComp("app-square", ({ html, css, self, queryAll, onAttached, query, create
         });
     };
 
+    const toggleWorkScreen = () => {
+        if (!openingAnimationOver) {
+            workClickedBeforeOpeningEnd = true;
+            return;
+        }
+        const containerSquare = query(`.${mainContainer}`);
+        const squareEls = queryAll(`.${squareContainer}`);
+        const topSquare = squareEls[1];
+        const bottomSquare = squareEls[0];
+
+        console.log(topSquare.shadowRoot);
+        anime({
+            targets: [...topSquare.shadowRoot.children, ...bottomSquare.shadowRoot.children],
+            opacity: 0,
+            duration: 100,
+            easing: "linear",
+        });
+        anime({
+            targets: topSquare,
+            width: [{ value: 0, duration: 400, easing: "easeInQuad" }],
+            height: [{ value: 0, duration: 400, easing: "easeInQuad" }],
+            complete() {
+                squareEls.forEach((el: HTMLElement) => (el.style.display = "none"));
+            },
+        });
+        anime({
+            targets: bottomSquare,
+            width: [{ value: 0, duration: 400, easing: "easeInQuad" }],
+            height: [{ value: 0, duration: 400, easing: "easeInQuad" }],
+            left: [{ value: `+=${endSquareSize}`, duration: 400, easing: "easeInQuad" }],
+            top: [{ value: `+=${endSquareSize}`, duration: 400, easing: "easeInQuad" }],
+        });
+        anime({
+            targets: containerSquare,
+            top: [
+                {
+                    value: `-=${endWorkContainerSize.h / 2 - endContainerSquareSize / 2}`,
+                    delay: 600,
+                    duration: 200,
+                    easing: "easeInQuad",
+                },
+            ],
+            left: [
+                {
+                    value: `-=${endWorkContainerSize.w / 2 - endContainerSquareSize / 2}`,
+                    delay: 400,
+                    duration: 200,
+                    easing: "easeInQuad",
+                },
+            ],
+            width: [{ value: endWorkContainerSize.w, delay: 400, duration: 200, easing: "easeInQuad" }],
+            height: [{ value: endWorkContainerSize.h, delay: 600, duration: 200, easing: "easeInQuad" }],
+            complete() {
+                gState.setGlobal("workScreenOpened", true);
+                anime({
+                    targets: containerSquare,
+                    backgroundColor: [{ value: "#D7A97F", duration: 100, easing: "easeInQuad" }],
+                })
+            }
+        });
+    };
+
+    onAttached(() => {
+        openingAnimation();
+        toggleWorkScreen();
+    });
+
     return () =>
-        html`<div class=${mainContainer}></div>
+        html`<div class=${mainContainer}>
+                <work-screen
+                    style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"
+                ></work-screen>
+            </div>
             <square-2
                 style="display: flex; align-items: center;
     justify-content: center; width: ${initSquareSize}px; height: ${initSquareSize}px; left: ${initPos.x}px; top: ${-initSquareSize}px; background-color: #D7A97F;"
@@ -143,6 +228,6 @@ createComp("app-square", ({ html, css, self, queryAll, onAttached, query, create
                 style="display: flex; align-items: center;
     justify-content: center; width: ${initSquareSize}px; height: ${initSquareSize}px; left: ${initPos.x}px; top: ${-initSquareSize}px; background-color: #8492C2;"
                 class=${squareContainer}
-                .props=${{ switchToPage2: () => switchPage(2) }}
+                .props=${{ switchToPage2: () => switchPage(2), toggleWorkScreen }}
             ></square-1>`;
 });
