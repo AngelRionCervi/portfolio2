@@ -21,7 +21,7 @@ createComp("app-square", ({ html, css, self, queryAll, onAttached, query, create
     const initContainerSquareSize = 0;
     const initSquareSize = 75;
     const endSquareSize = getEndMainScreenSize();
-    const borderWidth = 20;
+    const borderWidth = 10;
     const finalShift = 25;
     const switchPeak = endSquareSize / 2;
     const endContainerSquareSize = endSquareSize + finalShift * 2;
