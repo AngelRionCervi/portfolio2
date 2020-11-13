@@ -3,10 +3,10 @@ import { createComp } from "vengarl";
 //@ts-ignore
 import anime from "animejs";
 import gState from "../state";
+import workScreen from "./workScreen";
+import { square1, square2 } from "./squares";
 
-createComp("app-square", ({ html, css, self, queryAll, onAttached, query, createState }: any) => {
-    //const { state, setState } = createState({ currentPage: 1 });
-
+export default createComp("app-square", ({ html, css, queryAll, onAttached, query, scopedComp }: any) => {
     const getEndMainScreenSize = () => {
         const size = window.innerWidth / 7 + window.innerHeight / 7;
         return size > 500 ? size : 500;
@@ -18,21 +18,21 @@ createComp("app-square", ({ html, css, self, queryAll, onAttached, query, create
         return { w, h };
     };
 
-    const initContainerSquareSize = 0;
-    const initSquareSize = 75;
-    const endSquareSize = getEndMainScreenSize();
-    const borderWidth = 10;
-    const finalShift = 25;
-    const switchPeak = endSquareSize / 2;
-    const endContainerSquareSize = endSquareSize + finalShift * 2;
+    const initContainerSquareSize: number = 0;
+    const initSquareSize: number = 75;
+    const endSquareSize: number = getEndMainScreenSize();
+    const borderWidth: number = 10;
+    const finalShift: number = 25;
+    const switchPeak: number = endSquareSize / 2;
+    const endContainerSquareSize: number = endSquareSize + finalShift * 2;
 
-    const endWorkContainerSize = getEndWorkContainerSize();
+    const endWorkContainerSize: { w: number; h: number } = getEndWorkContainerSize();
 
-    let transitioning = false;
-    let openingAnimationOver = false;
-    let workClickedBeforeOpeningEnd = false;
+    let transitioning: boolean = false;
+    let openingAnimationOver: boolean = false;
+    let workClickedBeforeOpeningEnd: boolean = false;
 
-    const calcNewCenter = (size: number) => {
+    const calcNewCenter = (size: number): { x: number; y: number } => {
         return {
             x: window.innerWidth / 2 - size / 2,
             y: window.innerHeight / 2 - size / 2,
@@ -91,10 +91,18 @@ createComp("app-square", ({ html, css, self, queryAll, onAttached, query, create
                         width: [{ value: endContainerSquareSize, duration: 500, easing: "linear" }],
                         height: [{ value: endContainerSquareSize + 1, duration: 500, easing: "linear" }],
                         top: [
-                            { value: calcNewCenter(endContainerSquareSize).y + "px", duration: 500, easing: "linear" },
+                            {
+                                value: calcNewCenter(endContainerSquareSize).y + "px",
+                                duration: 500,
+                                easing: "linear",
+                            },
                         ],
                         left: [
-                            { value: calcNewCenter(endContainerSquareSize).x + "px", duration: 500, easing: "linear" },
+                            {
+                                value: calcNewCenter(endContainerSquareSize).x + "px",
+                                duration: 500,
+                                easing: "linear",
+                            },
                         ],
                         complete() {
                             openingAnimationOver = true;
@@ -202,14 +210,20 @@ createComp("app-square", ({ html, css, self, queryAll, onAttached, query, create
                 anime({
                     targets: containerSquare,
                     backgroundColor: [{ value: "#D7A97F", duration: 100, easing: "easeInQuad" }],
-                })
-            }
+                });
+            },
         });
     };
 
     onAttached(() => {
         openingAnimation();
-        toggleWorkScreen();
+        toggleWorkScreen(); // for creating it
+    });
+
+    scopedComp({
+        "work-screen": workScreen,
+        "square-1": square1,
+        "square-2": square2,
     });
 
     return () =>

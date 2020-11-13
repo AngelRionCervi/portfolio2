@@ -3,7 +3,7 @@ import { createComp } from "vengarl";
 //@ts-ignore
 import anime from "animejs";
 
-createComp("app-background", ({ css, html, query, onAttached }: any) => {
+export default createComp("app-background", ({ css, html, query, onAttached }: any) => {
     const background_container = css`
         width: 100%;
         height: 100%;

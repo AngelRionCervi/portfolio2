@@ -4,7 +4,7 @@ import { createComp } from "vengarl";
 import anime from "animejs";
 import gState from "../state";
 
-createComp("work-cursor", ({ html, css }: any) => {
+const workCursor = createComp("work-cursor", ({ html, css }: any) => {
     const container = css`
         width: 20px;
         height: 20px;
@@ -29,8 +29,9 @@ createComp("work-cursor", ({ html, css }: any) => {
         </div>`;
 });
 
-createComp("work-screen", ({ html, css, createState, useGlobal, cx }: any) => {
-    const { state, setState } = createState({ workScreenOpened: useGlobal("workScreenOpened") });
+export default createComp("work-screen", ({ html, css, useGlobal, scopedComp, cx, nc }: any) => {
+    //const { state, setState } = createState({ workScreenOpened: useGlobal("workScreenOpened") });
+    const [workScreenOpened] = useGlobal("workScreenOpened");
 
     const WORKS = [
         {
@@ -58,7 +59,6 @@ createComp("work-screen", ({ html, css, createState, useGlobal, cx }: any) => {
     const mainContainer = css`
         width: calc(100% - 6vh - 6vw);
         height: calc(100% - 6vh - 6vw);
-        opacity: 0;
         transition: opacity 100ms linear;
         display: grid;
         grid-template-columns: 1fr 2fr 1fr;
@@ -93,15 +93,19 @@ createComp("work-screen", ({ html, css, createState, useGlobal, cx }: any) => {
     `;
 
     const getContentOpacity = () => {
-        return state.workScreenOpened ? opacity1 : opacity0;
+        return workScreenOpened() ? opacity1 : opacity0;
     };
 
     const switchWork = (index: number) => {
         
     }
 
+    scopedComp({
+        "work-cursor": workCursor,
+    })
+
     return () =>
-        html`<div class=${cx(mainContainer, getContentOpacity())}>
+        html`<div class=${nc("workscreen-container", cx(mainContainer, getContentOpacity()))}>
             <div class=${workCol}>
                 <div class=${cursorSlider}><work-cursor></work-cursor></div>
                 <div class=${companyNamesContainer}>

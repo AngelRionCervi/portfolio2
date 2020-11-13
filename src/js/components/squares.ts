@@ -3,6 +3,7 @@ import { createComp, addGlobalCSS } from "vengarl";
 //@ts-ignore
 import anime from "animejs";
 import gState from "../state";
+//import circleArrow from "./circleArrow";
 
 addGlobalCSS`
     a {
@@ -14,9 +15,9 @@ addGlobalCSS`
     }
 `;
 
-createComp("square-1", ({ html, css, createState, useGlobal, cx, props, onAttached }: any) => {
-    // BUG : state key "openAnimationDone" must have the same name as the string used in useGlobal
-    const { state, setState } = createState({ openAnimationDone: useGlobal("openAnimationDone") });
+export const square1 = createComp("square-1", ({ html, css, useGlobal, cx, nc, props, onAttached, scopedComp }: any) => {
+
+    const [openAnimationDone] = useGlobal("openAnimationDone");
 
     const baseContainerStyle = css`
         display: grid;
@@ -77,9 +78,9 @@ createComp("square-1", ({ html, css, createState, useGlobal, cx, props, onAttach
         justify-self: right;
     `;
 
-    onAttached(() => {
-        console.log(props());
-    });
+    // scopedComp({
+    //     "circle-arrowa": circleArrow,
+    // })
 
     return () =>
         html`<div class=${cx(baseContainerStyle, getContainerOpa())}>
@@ -89,18 +90,19 @@ createComp("square-1", ({ html, css, createState, useGlobal, cx, props, onAttach
                 My name is Angel Rion - Cervi <br /><br />
                 I like to build and design website
             </p>
-            <div class=${workIcon} @click=${() => props()?.toggleWorkScreen()}></div>
-            <circle-arrow
+            <div class=${workIcon} @click=${() => props.toggleWorkScreen()}></div>
+            <!-- <circle-arrowa
                 orientation="bottom-right"
                 circleSize="20"
-                .props=${{ click: props()?.switchToPage2 }}
+                .props=${{ click: props.switchToPage2 }}
                 class=${circleArrowPos}
-            ></circle-arrow>
+            ></circle-arrowa> -->
         </div>`;
 });
 
-createComp("square-2", ({ html, css, props, onAttached, cx, createState, useGlobal }: any) => {
-    const { state, setState } = createState({ openAnimationDone: useGlobal("openAnimationDone") });
+export const square2 = createComp("square-2", ({ html, css, props, onAttached, cx, createState, scopedComp, useGlobal }: any) => {
+    //const { state, setState } = createState({ openAnimationDone: useGlobal("openAnimationDone") });
+    useGlobal("openAnimationDone");
 
     const baseContainerStyle = css`
         display: grid;
@@ -155,18 +157,18 @@ createComp("square-2", ({ html, css, props, onAttached, cx, createState, useGlob
         text-align: center;
     `;
 
-    onAttached(() => {
-        console.log(props());
-    });
+    // scopedComp({
+    //     "circle-arrowb": circleArrow,
+    // })
 
     return () =>
         html`<div class=${cx(baseContainerStyle, getContainerOpa())}>
-            <circle-arrow
+            <!-- <circle-arrowb
                 orientation="top-left"
                 circleSize="20"
-                .props=${{ click: props()?.switchToPage1 }}
+                .props=${{ click: props.switchToPage1 }}
                 class=${circleArrowPos}
-            ></circle-arrow>
+            ></circle-arrowb> -->
             <p class=${pageNumber}>002</p>
             <p class=${centerText}>
                 Dont hesitate to contact me for work <br /><br />

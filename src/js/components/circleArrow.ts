@@ -3,7 +3,7 @@ import { createComp } from "vengarl";
 //@ts-ignore
 import anime from "animejs";
 
-createComp("circle-arrow", ({ html, css, props, self, onAttached, queryAll }: any) => {
+export default createComp("circle-arrow", ({ html, css, props, self, onAttached, queryAll }: any) => {
     const arrowCircleSize = parseInt(self.attributes.circleSize.value);
 
     const getTemplateArea = () => {
@@ -74,7 +74,7 @@ createComp("circle-arrow", ({ html, css, props, self, onAttached, queryAll }: an
         }
     }
 
-    return () => html`<div @mouseleave=${hoverEffectOut} @mouseover=${hoverEffectIn} @click=${() => props().click()} class=${circleArrow}>
+    return () => html`<div @mouseleave=${hoverEffectOut} @mouseover=${hoverEffectIn} @click=${() => props.click()} class=${circleArrow}>
         <div class=${circle} style="grid-area: top1;"></div>
         <div class=${circle} style="grid-area: center1;"></div>
         <div class=${circle} style="grid-area: center2;"></div>

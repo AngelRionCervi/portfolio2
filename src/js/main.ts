@@ -1,12 +1,14 @@
 //@ts-ignore
 import { createComp, store, addGlobalCSS } from "vengarl";
-import "./components/background";
-import "./components/squaresContainer";
-import "./components/squares";
-import "./components/circleArrow";
-import "./components/workScreen";
+import appBackground from "./components/background";
+import appSquare from "./components/squaresContainer";
 
-createComp("app-root", ({ html }: any) => {
+createComp("app-root", ({ html, scopedComp }: any) => {
     
+    scopedComp({
+        "app-background": appBackground,
+        "app-square": appSquare,
+    })
+
     return () => html`<app-background></app-background><app-square></app-square>`;
-});
+}, true);
